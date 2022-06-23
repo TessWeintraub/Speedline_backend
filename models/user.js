@@ -37,70 +37,8 @@ const userSchema = new Schema({
     }
   },
   warehouses: [{
-    characteristic: {
-      button_text: {
-        type: String,
-        default: 'Add cargo +'
-      },
-      five: {
-        type: String,
-        default: 'Shipment method'
-      },
-      four: {
-        type: String,
-        default: 'Purchasing technology'
-      },
-      three: {
-        type: String,
-        default: 'Item number'
-      },
-      two: {
-        type: String,
-        default: 'Manufacturer'
-      },
-      one: {
-        type: String,
-        default: 'All stores'
-      },
-      title: {
-        type: String,
-      }
-    },
-    five: {
-      type: Number,
-    },
-    four: {
-      type: Number,
-    },
-    three: {
-      type: Number,
-    },
-    two: {
-      type: Number,
-    },
-    one: {
-      type: String,
-    },
-    products: [{
-      five: {
-        type: String
-      },
-      four: {
-        type: String
-      },
-      three: {
-        type: String
-      },
-      two: {
-        type: String
-      },
-      one: {
-        type: String
-      },
-      payment: {
-        type: String
-      }
-    }]
+    type: Object
   }]
 
 })
+module.exports = mongoose.model('users' ,userSchema)
