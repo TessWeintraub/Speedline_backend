@@ -36,9 +36,12 @@ const userSchema = new Schema({
       default: 'All stores'
     }
   },
-  warehouses: [{
-    type: Object
-  }]
+  warehouses: [
+    {
+      ref: 'warehouses',
+      type: Schema.Types.ObjectId
+    }
+  ]
 
 })
 module.exports = mongoose.model('users' ,userSchema)

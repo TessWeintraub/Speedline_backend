@@ -1,34 +1,28 @@
 const User = require('../models/user')
 const Warehouses = require('../models/warehouses')
-const jwtDecoded = require('jwt-decode')
 const errorHandler = require('../utils/errorHandler')
 
 module.exports.create = async (req,res) => {
   try {
-    const requestUserId = await jwtDecoded(req.headers.authorization).userId // Декодируем токен для получения id пользователя
-    const userDataBases = await User.findOne({_id: requestUserId}) // ищем пользователя в БД
-
+    const userDataBases = await User.findOne({_id: req.user.id}) // ищем пользователя в БД
+    const createWarehouse = req.body['createWarehouse']
 
     if (userDataBases){
       const newWarehouse = new Warehouses({
-        userId: requestUserId,
-        five: req.body.five,
-        four: req.body.four,
-        three: req.body.three,
-        two: req.body.two,
-        one: req.body.one,
+        userId: req.user.id,
+        five: createWarehouse.five,
+        four: createWarehouse.four,
+        three: createWarehouse.three,
+        two: createWarehouse.two,
+        one: createWarehouse.one,
         products: []
       })
 
       try {
           await newWarehouse.save()
-          const allWarehouseUser = await Warehouses.find({userId: requestUserId})
-          const updateUser = await User.findOneAndUpdate({_id: requestUserId},{
-            $set:{
-              warehouses: [...allWarehouseUser,newWarehouse]
-            }
-          })
-          res.status(200).json(updateUser)
+          await User.updateOne({_id: req.user.id},{$push: {warehouses: newWarehouse._id}})
+          const updatedUser = await User.findOne({_id: req.user.id}).populate('warehouses')
+          res.status(200).json(updatedUser)
       }
       catch (e){
         errorHandler(res,e)
@@ -46,24 +40,22 @@ module.exports.create = async (req,res) => {
 
 module.exports.remove = async (req,res) =>{
   try {
-    const requestUserId = await jwtDecoded(req.headers.authorization).userId // Декодируем токен для получения id пользователя
-    const userDataBases = await User.findOne({_id: requestUserId}) // ищем пользователя в БД
-
-
+    const userDataBases = await User.findOne({_id: req.user.id}) // ищем пользователя в БД
     if (userDataBases){
       try {
-        console.log(req.body.warehouses)
-          const removeWarehouses = req.body.warehouses
 
-          Warehouses.remove({_id: {$in: removeWarehouses}})
-          User.updateOne({_id: requestUserId} , {$pull: { warehouses: { _id:  "62b4d69aff619a18d4148ba2"}}})
-          const allWarehouseUser = await Warehouses.find({userId: requestUserId})
-          const updateUser = await User.findOneAndUpdate({_id: requestUserId},{
-            $set:{
-              warehouses: [...allWarehouseUser]
-            }
-          })
-          res.status(200).json(updateUser)
+          const removeWarehouses = req.body.warehouses
+          await Warehouses.remove({_id: {$in: removeWarehouses}})
+          await User.updateMany({_id: req.user.id} , {$pull: { warehouses: {$in: removeWarehouses}}})
+          const updatedUser = await User.findOne({_id: req.user.id})
+          res.status(200).json(updatedUser)
+
+        // const allWarehouseUser = await Warehouses.find({userId: req.user.id})
+        // const updateUser = await User.findOneAndUpdate({_id: req.user.id},{
+        //   $set:{
+        //     warehouses: [...allWarehouseUser]
+        //   }
+        // })
 
       }
       catch (e){
