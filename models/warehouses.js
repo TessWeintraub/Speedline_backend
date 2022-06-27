@@ -46,6 +46,7 @@ const warehouseSchema = new Schema({
     },
     two: {
       type: Number,
+      default: 0
     },
     one: {
       type: String,

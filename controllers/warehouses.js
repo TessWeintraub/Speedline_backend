@@ -47,7 +47,7 @@ module.exports.remove = async (req,res) =>{
           const removeWarehouses = req.body.warehouses
           await Warehouses.remove({_id: {$in: removeWarehouses}})
           await User.updateMany({_id: req.user.id} , {$pull: { warehouses: {$in: removeWarehouses}}})
-          const updatedUser = await User.findOne({_id: req.user.id})
+          const updatedUser = await User.findOne({_id: req.user.id}).populate('warehouses')
           res.status(200).json(updatedUser)
 
         // const allWarehouseUser = await Warehouses.find({userId: req.user.id})
