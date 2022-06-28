@@ -51,6 +51,10 @@ const warehouseSchema = new Schema({
     one: {
       type: String,
     },
+    checked: {
+      type: Boolean,
+      default: false
+    },
     products: [{
       five: {
         type: String
@@ -69,7 +73,11 @@ const warehouseSchema = new Schema({
       },
       payment: {
         type: String
-      }
+      },
+      checked: {
+        type: Boolean,
+        default: false
+      },
     }]
 })
 

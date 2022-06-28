@@ -7,7 +7,6 @@ module.exports.create = async (req,res) => {
   try {
     const userInDataBases = await User.findOne({_id: req.user.id}) // Проверка пользователя на нахождение в БД
 
-
     if (userInDataBases){
       const warehouseId = req.body['warehouseId'] // Обращаемся к ключу в теле запроса, который содержит id склада
       const product = req.body['createProduct'] // Обращаемся к ключу в теле запроса, который содержит данные о новом товаре
@@ -62,7 +61,7 @@ module.exports.remove = async (req,res) =>{
     if (userInDataBases) {
       const warehouseId = req.body.warehouseId // Обращаемся к ключу в теле запроса, который содержит id склада
       const removeProducts = req.body.removeProducts // Обращаемся к ключу в теле запроса, который содержит данные о новом товаре
-
+      console.log(req.body)
       try {
         const warehouse = await Warehouses.findOne({_id: warehouseId, userId: req.user.id}) // Получаем текущую информацию о складе
 

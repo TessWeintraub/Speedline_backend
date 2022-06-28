@@ -13,7 +13,6 @@ module.exports.create = async (req,res) => {
         five: createWarehouse.five,
         four: createWarehouse.four,
         three: createWarehouse.three,
-        two: createWarehouse.two,
         one: createWarehouse.one,
         products: []
       })

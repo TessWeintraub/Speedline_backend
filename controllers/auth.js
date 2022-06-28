@@ -5,8 +5,6 @@ const keys = require('../config/keys')
 const errorHandler = require('../utils/errorHandler')
 
 module.exports.login = async (req,res) => {
-
-
   const candidate = await User.findOne({email: req.body.email})
   console.log(candidate)
 
