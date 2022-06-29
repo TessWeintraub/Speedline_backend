@@ -70,3 +70,35 @@ module.exports.remove = async (req,res) =>{
     errorHandler(res,error)
   }
 }
+
+module.exports.edit = async (req,res) =>{
+  try {
+    const userDataBases = await User.findOne({_id: req.user.id}) // ищем пользователя в БД
+    if (userDataBases){
+      try {
+        const editWarehouse = req.body.editWarehouse
+        const warehouseId = req.body.warehouseId
+        await Warehouses.updateOne({_id: warehouseId, userId: req.user.id}, {
+          $set: {
+            one: editWarehouse.one,
+            three: editWarehouse.three,
+            four: editWarehouse.four,
+            five: editWarehouse.five
+          }
+        })
+        const updatedUser = await User.findOne({_id: req.user.id}).populate('warehouses')
+        res.status(200).json(updatedUser)
+      }
+      catch (e){
+        errorHandler(res,e)
+      }
+    }
+    else {
+      res.status(404).json({
+        message: 'Пользователь не существует'
+      })
+    }
+  }catch (error){
+    errorHandler(res,error)
+  }
+}

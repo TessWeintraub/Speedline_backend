@@ -15,6 +15,7 @@ module.exports.create = async (req,res) => {
         five: product.five,
         four: product.four,
         three: product.three,
+        two: product.two,
         one: product.one,
         payment: product.payment
       }
@@ -97,6 +98,55 @@ module.exports.remove = async (req,res) =>{
     errorHandler(res, error)
   }
 }
+
+module.exports.edit = async (req,res) =>{
+  try {
+    const userInDataBases = await User.findOne({_id: req.user.id}) // Проверка пользователя на нахождение в БД
+
+
+    if (userInDataBases) {
+      const warehouseId = req.body.warehouseId // Обращаемся к ключу в теле запроса, который содержит id склада
+      const productId = req.body.productId // Обращаемся к ключу в теле запроса, который содержит данные о новом товаре
+      const editProduct = req.body.editProduct // Обращаемся к ключу в теле запроса, который содержит данные о новом товаре
+      try {
+
+        const editedProduct = {
+          _id: productId,
+          checked: false,
+          ...editProduct
+        }
+
+
+        await Warehouses.updateOne({_id: warehouseId},
+          {
+                  $pull: {
+                    products: {
+                      _id: productId}
+                  }
+          })
+        await Warehouses.updateOne({_id: warehouseId},
+          {
+                  $push: {
+                    products: {...editedProduct}
+                  }
+          })
+
+        const updatedUser = await User.findOne({_id: req.user.id}).populate('warehouses') // Запрашиваем обновленные данные
+
+        res.status(200).json(updatedUser) // Отдаем пользователю обновленные данные
+      } catch (e) {
+        errorHandler(res, e)
+      }
+    } else { // Если пользователь не был найден в БД
+      res.status(404).json({
+        message: 'Пользователь не существует'
+      })
+    }
+  } catch (error) {
+    errorHandler(res, error)
+  }
+}
+
 
 module.exports.move = async (req,res) => {
   try {

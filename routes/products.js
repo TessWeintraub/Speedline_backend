@@ -10,4 +10,6 @@ router.post('/remove', passport.authenticate('jwt',{session: false}), controller
 
 router.post('/move', passport.authenticate('jwt',{session: false}), controller.move)
 
+router.post('/edit', passport.authenticate('jwt',{session: false}), controller.edit)
+
 module.exports = router
